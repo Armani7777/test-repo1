@@ -1,0 +1,13 @@
+num1 = float(input())
+num2 = float(input())
+num3 = float(input())
+
+D = num2**2 - 4*num1*num3
+
+if D > 0:
+    x1 = (-num2 + D**0.5) / (2*num1)
+    x2 = (-num2 - D**0.5) / (2*num1)
+    print(x1, x2)
+elif D == 0:
+    x = -num2 / (2*num1)
+    print(x)
