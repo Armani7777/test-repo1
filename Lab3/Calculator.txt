@@ -29,7 +29,7 @@ def is_valid_number(n):
 while True:
     print('Какую операцию вы хотите выполнить? ', *operations(), sep='\n')
 
-    while (operation := input('Напишите номер здесь: ')).isdigit():
+    while (operation := input('Напишите номер здесь: ')).isdigit() and 1 <= int(operation) <= 5:
         operation = int(operation)
         break
     else:
