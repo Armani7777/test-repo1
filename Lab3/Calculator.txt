@@ -1,0 +1,70 @@
+def operations():
+    lst = [
+        '1. a + b',
+        '2. a - b',
+        '3. a * b',
+        '4. a / b',
+        '5. a ** b (Возведение в степень)'
+    ]
+    return lst
+
+def add(n, m):
+    return f'{n} + {m} = {n + m}'
+
+def subtract(n, m):
+    return f'{n} - {m} = {n - m}'
+
+def multiply(n, m):
+    return f'{n} * {m} = {n * m}'
+
+def divide(n, m):
+    return f'{n} / {m} = {n / m}'
+
+def degree(n, m):
+    return f'{n} ** {m} = {n ** m}'
+
+def is_valid_number(n):
+    return f'Вы ввели {type(n)} а надо было ввести тип данных int ай ай ай ай а\n'
+
+while True:
+    print('Какую операцию вы хотите выполнить? ', *operations(), sep='\n')
+
+    while (operation := input('Напишите номер здесь: ')).isdigit():
+        operation = int(operation)
+        break
+    else:
+        print(is_valid_number(operation))
+        continue
+
+    while (num1 := input('Напишите первое число: ')).isdigit():
+        num1 = int(num1)
+        break
+    else:
+        print(is_valid_number(num1))
+        continue
+
+    while (num2 := input('Напишите второе число: ')).isdigit():
+        num2 = int(num2)
+        break
+    else:
+        print(is_valid_number(num2))
+        continue
+
+    match operation:
+        case 1:
+            print(add(num1, num2))
+        case 2:
+            print(subtract(num1, num2))
+        case 3:
+            print(multiply(num1, num2))
+        case 4:
+            print(divide(num1, num2))
+        case 5:
+            print(degree(num1, num2))
+        case _:
+            print("Вы ввели неправилные данные. Напишите число от 1 до 5")
+
+    again = input('Еще раз? Напишите да/нет: ')
+    if again != 'да':
+        print('До встречи!')
+        break
