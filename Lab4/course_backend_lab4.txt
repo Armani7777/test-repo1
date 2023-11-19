@@ -1,0 +1,155 @@
+users = []
+
+commands = [
+    'Какую команду хотите выполнить?',
+    '1. Добавить пользователя',
+    '2. Показать список пользователей',
+    '3. Удалить пользователя',
+    '4. Вход в аккаунт',
+    '5. Закончить работу программы'
+]
+
+def create_user(user: dict):
+    users.append(user)
+    return 'Пользователь добавлен.\n'
+
+def show_list_of_users():
+    if users:
+        return users
+    else:
+        return None
+
+def get_user_by_email(email: str):
+    for user in users:
+        if user.get('Email') == email:
+            return user
+    return None
+
+def delete_user_by_email(email: str):
+    user = get_user_by_email(email)
+
+    if user in users:
+        users.remove(user)
+        return 'Пользователь был удален.\n'
+    else:
+        return None
+
+def update_user_by_email(email: str, new_info: dict):
+    user = get_user_by_email(email)
+
+    if user in users:
+        user.update(new_info)
+        return 'Ваши данные были обновлены.\n'
+    else:
+        return None
+
+def login(email: str):
+    for user in users:
+        if user.get('Email') == email:
+            attempt = 3
+            while True and attempt > 0:
+                passwd = input('Напишите пароль: ')
+                if passwd == user['Password']:
+                    return f'Вы успешно вошли в аккаунт!\n'
+                else:
+                    attempt -= 1
+                    print(f'Неправильный пароль. У вас осталось {attempt} попыток.')
+        else:
+            return None
+
+while True:
+    print(*commands, sep='\n')
+    command = ''
+
+    while True:
+        command = input('Напишите номер команды: ')
+        if command.isdigit() and 1 <= int(command) <= 5:
+            command = int(command)
+            break
+        else:
+            print(f'Вы ввели неправильные данные прошу введите число от 1 до 5\n')
+            continue
+
+    match command:
+        case 1:
+            print('Заполните следующие данные:')
+            name = input('Напишите имя: ')
+            surname = input('Напишите фамилию: ')
+            while True:
+                age = input('Напишите ваш возраст: ')
+                if age.isdigit() and int(age) > 0:
+                    age = int(age)
+                    break
+                else:
+                    print('Вы ввели неправильные данные\n')
+                    continue
+            address = input('Напишите свой адрес: ')
+            while True:
+                email = input('Напишите новый email: ')
+                if get_user_by_email(email) != None:
+                    print('Этот email уже занят напишите другой.')
+                else:
+                    break
+
+            while True:
+                password = input('Напишите ваш пароль минимум 8 символов: ')
+                if len(password) >= 8:
+                    print()
+                    break
+                else:
+                    continue
+
+            user_info = {
+                'Name': name,
+                'Surname': surname,
+                'Age': age,
+                'Address': address,
+                'Email': email,
+                'Password': password,
+            }
+
+            if commands[1] == '1. Редактировать профиль':
+                useremail = input('Чтобы обновить данные напишите ваш старый email: ')
+                print(update_user_by_email(useremail, user_info))
+            else:
+                create_user(user_info)
+
+        case 2:
+            if users:
+                for user in show_list_of_users():
+                    for key, value in user.items():
+                        if key != 'Password':
+                            print(f'{key}: {value}', end=', ')
+                        else:
+                            print()
+                            continue
+            else:
+                print('Пользователи не добавлены.\n')
+        case 3:
+            email = input('Напишите email пользователя которого хотите удалить: ')
+            print(delete_user_by_email(email))
+        case 4:
+            if commands[4] == '4. Вход в аккаунт':
+                user_email = input('Напишите email: ')
+                user = login(user_email)
+                if user != None:
+                    print(user)
+                    commands[1] = '1. Редактировать профиль'
+                    commands[4] = '4. Выйти с аккаунта'
+                    continue
+                else:
+                    print('Пользователь не найден.\n')
+            else:
+                commands[1] = '1. Добавить пользователя'
+                commands[4] = '4. Вход в аккаунт'
+                print('Вы вышли с аккаунта.\n')
+
+        case 5:
+            print('До встречи!\n')
+            break
+
+    again = input('Еще раз? Напишите yes/no: ')
+    print()
+    if again != 'yes':
+        print('До встречи!')
+        break
