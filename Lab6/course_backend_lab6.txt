@@ -1,0 +1,78 @@
+import cmd
+import os
+import time
+
+def timing_decorator(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        print(f"Время выполнения '{func.__name__}': {end_time - start_time:.6f} секунд")
+        return result
+    return wrapper
+
+class CommandPrompt(cmd.Cmd):
+    prompt = 'Напишите команду: '
+
+    @timing_decorator
+    def do_ls(self, line):
+        #Показать все директории в текущей папке
+        files = os.listdir('.')
+        directories = [d for d in files if os.path.isdir(d)]
+        print("Директории:", directories)
+
+    @timing_decorator
+    def do_cd(self, folder):
+        #Переход в указанную директорию
+        try:
+            os.chdir(folder)
+            print("Текущая директория:", os.getcwd())
+        except FileNotFoundError:
+            print(f"Директория '{folder}' не найдена.")
+
+    @timing_decorator
+    def do_create_dir(self, folder):
+        #Создать новую директорию
+        os.mkdir(folder)
+        print(f"Директория '{folder}' создана.")
+
+    @timing_decorator
+    def do_remove_dir(self, folder):
+        #Удалить директорию
+        try:
+            os.rmdir(folder)
+            print(f"Директория '{folder}' удалена.")
+        except FileNotFoundError:
+            print(f"Директория '{folder}' не найдена.")
+
+    @timing_decorator
+    def do_rename(self, args):
+        #Переименовать файл или директорию
+        old_name, new_name = args.split()
+        try:
+            os.rename(old_name, new_name)
+            print(f"{old_name} переименовано в {new_name}.")
+        except FileNotFoundError:
+            print(f"Файл или директория '{old_name}' не найдены.")
+
+    @timing_decorator
+    def do_view(self, file):
+        #Просмотр содержимого файла (для .txt и .md)
+        try:
+            with open(file, 'r') as f:
+                print(f.read())
+        except FileNotFoundError:
+            print(f"Файл '{file}' не найден.")
+        except UnicodeDecodeError:
+            print(f"Невозможно прочитать файл '{file}' (не поддерживаемый формат).")
+
+    @timing_decorator
+    def do_exit(self, line):
+        #Выход из программы
+        print("Выход из программы.")
+        return True
+
+
+if __name__ == '__main__':
+    command_prompt = CommandPrompt()
+    command_prompt.cmdloop()
