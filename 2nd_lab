@@ -1,0 +1,145 @@
+commands = [
+    "Список команд:",
+    "1. Добавить пользователя",
+    "2. Вход в аккаунт",
+    "3. Найти пользователя",
+    "4. Удалить аккаунт",
+    "5. Завершить работу программы"
+]
+
+users = []
+
+def create_user(user: dict) -> None:
+    if isinstance(user, dict):
+        users.append(user)
+        print("Пользователь успешно добавлен!\n")
+
+def get_user_by_email(email: str) -> dict | None:
+    for user in users:
+        if user.get('email') == email:
+            return user
+
+    return None
+
+def update_user(email: str, data: dict) -> dict | None:
+    user = get_user_by_email(email)
+
+    if user is None:
+        return None
+
+    user.update(data)
+    print("Данные успешно обновлены!\n")
+    return user
+
+def delete_user_by_email(email: str) -> None:
+    user = get_user_by_email(email)
+
+    if user is None:
+        return None
+
+    users.remove(user)
+    print("Пользователь удален!\n")
+
+def login(email: str) -> dict | None:
+    user = get_user_by_email(email)
+
+    if user is None:
+        return None
+
+    return user
+
+def is_correct_command() -> int:
+    while True:
+        command_number = input("Напишите номер команды: ")
+
+        if not command_number.isdigit():
+            print("Напишите номер команды которого хотите выполнить. От 1 до 5")
+            continue
+        elif not 1 <= int(command_number) <= 5:
+            print("Напишите номер команды которого хотите выполнить. От 1 до 5")
+            continue
+
+        return int(command_number)
+
+def is_unique_email() -> str:
+    while True:
+        new_email = input("Напишите email: ")
+
+        if not get_user_by_email(new_email) is None:
+            print("Этот email уже занят, создайте новый email!")
+            continue
+
+        return new_email
+
+
+def is_correct_password() -> str:
+    while True:
+        password = input("Напишите пароль: ")
+
+        if len(password) < 8:
+            print("Пароль должен содержать в себе не менее 8 символов!")
+            continue
+        elif not any(sym.isdigit() for sym in password):
+            print("Пароль должен содержать в себе хотябы одну цифру!")
+            continue
+        elif not any(sym.isupper() for sym in password):
+            print("Пароль должен содержать в себе хотябы одну заглавную букву!")
+            continue
+        elif not any(sym.islower() for sym in password):
+            print("Пароль должен содержать в себе хотябы одну строчную букву!")
+            continue
+        elif not any(sym in ".,)(!@_?" for sym in password):
+            print("Пароль должен содержать в себе хотябы один специальный символ!")
+
+        return password
+
+# Начало программы
+print("Добро пожаловать!")
+while True:
+    print(*commands, sep="\n")
+
+    command = is_correct_command()
+
+    match command:
+        case 1:
+            print("\nЗаполните следующие данные: ")
+
+            new_user = {
+                "first_name": input("Напишите имя: "),
+                "last_name": input("Напишите фамилию: "),
+                "email": is_unique_email(),
+                "password": is_correct_password(),
+            }
+            create_user(new_user)
+
+        case 2:
+            email = input("Напишите email: ")
+            user = login(email)
+            password = input("Напишите пароль: ")
+
+            if user["password"] == password:
+                if commands[2] == "2. Вход в аккаунт":
+                    commands[2] = "2. Выйти с аккаунта"
+                elif commands[2] == "2. Выйти с аккаунта":
+                    commands[2] = "2. Вход в аккаунт"
+                print("Вы успешно зашли на аккаунт!\n")
+        case 3:
+            email = input("\nНапишите email пользователя: ")
+
+            user = get_user_by_email(email)
+            if user:
+                print(user, end="\n\n")
+            else:
+                print("Пользователь не найден!\n")
+        case 4:
+            email = input("\nНапишите email аккаунта который хотите удалить: ")
+
+            delete_user_by_email(email)
+        case 5:
+            print("До встречи!")
+            break
+        case _:
+            print("Вы ввели неправильные данные\n")
+            continue
+
+
